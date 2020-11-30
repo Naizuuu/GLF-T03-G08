@@ -91,7 +91,23 @@ class AFND extends AFD {
             }
         }
     }
-    public function convertirAFDAER () {
+    private function estanConectados ($estado1, $estado2) {
+        foreach($this->relacionDeTransicion[$estado1] as $caracter => $estadoDeLlegada) {
+            if($estadoDeLlegada[0] == $estado2) {
+                return true;
+            }
+        }
+    }
+    private function agregarTransicionesVaciasEntreEstados() {
+        foreach($this->conjuntoDeIdentificadores as $identificador1) {
+            foreach($this->conjuntoDeIdentificadores as $identificador2) {
+                if(!$this->estanConectados($identificador1, $identificador2)) {
+                    $this->relacionDeTransicion[$identificador1]["$"][] = $identificador2;
+                }
+            }
+        }
+    }
+    public function convertirAFDaER () {
         foreach($this->estadosFinales as $estadoFinal) {
             $this->relacionDeTransicion[$estadoFinal]["@"][] = "F";
         }
@@ -99,6 +115,7 @@ class AFND extends AFD {
         $this->conjuntoDeIdentificadores[] = "F";
         $this->estadosFinales = ["F"];
         $this->cambiarEtiquetasAExpresionesRegulares();
+        $this->agregarTransicionesVaciasEntreEstados ();
     }
     private function buscarMasTransicionesAFND($estado1, $estado2) {
         foreach ($this->relacionDeTransicion[$estado1] as $a => $transicion) {
