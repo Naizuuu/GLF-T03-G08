@@ -75,6 +75,31 @@ class AFND extends AFD {
             $this->relacionDeTransicion[$transiciones[0]][$transiciones[1]][] = $transiciones[2];
         }
     }
+    private function cambiarEtiquetasAExpresionesRegulares() {
+        foreach($this->conjuntoDeIdentificadores as $identificador) {
+            $expresionRegular = [];
+            $unset = 0;
+            foreach ($this->relacionDeTransicion[$identificador] as $caracter => $transiciones) {
+                if ($this->relacionDeTransicion[$identificador][$caracter][0] == $identificador) {
+                    $expresionRegular[] = $caracter;
+                    unset($this->relacionDeTransicion[$identificador][$caracter]);
+                    $unset = 1;
+                }
+            }
+            if($unset == 1) {
+                $this->relacionDeTransicion[$identificador][implode('+', $expresionRegular)][] = $identificador;
+            }
+        }
+    }
+    public function convertirAFDAER () {
+        foreach($this->estadosFinales as $estadoFinal) {
+            $this->relacionDeTransicion[$estadoFinal]["@"][] = "F";
+        }
+        $this->relacionDeTransicion["F"] = [];
+        $this->conjuntoDeIdentificadores[] = "F";
+        $this->estadosFinales = ["F"];
+        $this->cambiarEtiquetasAExpresionesRegulares();
+    }
     private function buscarMasTransicionesAFND($estado1, $estado2) {
         foreach ($this->relacionDeTransicion[$estado1] as $a => $transicion) {
             foreach ($transicion as $t) {
