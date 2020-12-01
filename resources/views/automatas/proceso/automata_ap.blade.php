@@ -12,13 +12,12 @@
     $estadoInicial1 = base64_decode($_GET['ei1']);
     $estadosFinales1 = base64_decode($_GET['ef1']);
     $fTrans1 = base64_decode($_GET['f1']);
-    $automataUno = base64_decode($_GET['au1']);
+    $automataElegido = base64_decode($_GET['ae']);
     /* automata 2 */
     $identificadores2 = base64_decode($_GET['i2']);
     $estadoInicial2 = base64_decode($_GET['ei2']);
     $estadosFinales2 = base64_decode($_GET['ef2']);
     $fTrans2 = base64_decode($_GET['f2']);
-    $automataDos = base64_decode($_GET['au2']);
 
     if($automataUno == "AFD" && $automataDos == "AFND") {
         $automata1 = new AFD();

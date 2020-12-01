@@ -1,7 +1,10 @@
-/*
- * Globals
- */
-
+/* Globals */
+:root {
+    --global-color-primary: #214252;
+    --global-color-secondary: #f05454;
+    --global-color-warning: #af2d2d;
+    --global-color-danger: #ce6262;
+}
 /* Links */
 a,
 a:focus,
@@ -24,12 +27,21 @@ a:hover {
     width: auto !important; 
     border-radius: 50px !important; 
     display: inline-flex !important;
+    background-color: var(--global-color-secondary) !important;
+    color: white !important;
+}
+
+input, select {
+    background-color: black !important;
+    border-color: black !important;
+    color: white !important;
 }
 
 html,
 body {
     height: 100%;
-    background-color: lightseagreen;
+    /* background-color: rgb(255, 216, 87); */
+    background-color: var(--global-color-primary);
 }
 
 body {

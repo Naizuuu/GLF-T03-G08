@@ -3,26 +3,17 @@
     <div class="row">
         <div class="col-sm"> 
             <div class="input-group" style="margin-top: 3%;">
-                <select class="custom-select" name="automataUno">
-                    <option value="AFD" <?php if(isset($_GET['automataUno']) && $_GET['automataUno'] == 'AFD') { echo 'selected="selected"'; } ?>>AFD</option>
-                    <option value="AFND" <?php if(isset($_GET['automataUno']) && $_GET['automataUno'] == 'AFND') { echo 'selected="selected"'; } ?>>AFND</option>
+                <select class="custom-select" name="automataElegido" {{-- style="text-align-last: center;" --}}>
+                    <option value="AFD" <?php if(isset($_GET['automataElegido']) && $_GET['automataElegido'] == 'AFD') { echo 'selected="selected"'; } ?>>AFD</option>
+                    <option value="AP" <?php if(isset($_GET['automataElegido']) && $_GET['automataElegido'] == 'AP') { echo 'selected="selected"'; } ?>>AP</option>
                 </select>
-            </div>
-        </div>
-        <div class="col-sm">
-            <div class="input-group" style="margin-top: 3%;">
-            <select class="custom-select" name="automataDos">
-                <option value="AFD" <?php if(isset($_GET['automataDos']) && $_GET['automataDos'] == 'AFD') { echo 'selected="selected"'; } ?>>AFD</option>
-                <option value="AFND" <?php if(isset($_GET['automataDos']) && $_GET['automataDos'] == 'AFND') { echo 'selected="selected"'; } ?>>AFND</option>
-            </select>
             </div>
         </div>
     </div>
 
-    @isset($_GET['automataUno'])
+    @isset($_GET['automataElegido'])
         @php
-            $automataUno = $_GET['automataUno'];
-            $automataDos = $_GET['automataDos'];
+            $automataElegido = $_GET['automataElegido'];
         @endphp
     @endisset
     <div class="row">

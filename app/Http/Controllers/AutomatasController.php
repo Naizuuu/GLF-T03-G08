@@ -10,18 +10,13 @@ class AutomatasController extends Controller
         return view('automatas.home');
     }
 
-    function automata_home()
+    function automata_afd()
     {
-        return view('automatas.proceso.automata_home');
+        return view('automatas.proceso.automata_afd');
     }
 
-    function afd_afd()
+    function automata_ap()
     {
-        return view('automatas.proceso.afd_afd');
-    }
-
-    function afd_afnd()
-    {
-        return view('automatas.proceso.afd_afnd');
+        return view('automatas.proceso.automata_ap');
     }
 }

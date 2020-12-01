@@ -124,7 +124,7 @@
     
     @isset($_GET[$cantEstado . '_estadosfinales'])
     @php 
-        echo '<br><br>Por favor, presione confirmar nuevamente.';
+        echo 'Por favor, presione confirmar nuevamente.';
     @endphp
     @endisset
 
