@@ -1,6 +1,6 @@
 @extends('layouts.plantilla')
 
-@section('title', 'Trabajo 2 - Autómatas')
+@section('title', 'Trabajo 3 - Grafos y Lenguajes Formales')
 
 @section('content')
 
