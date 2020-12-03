@@ -185,24 +185,28 @@ class AFND extends AFD {
             $this->relacionDeTransicion[$transiciones[0]][$transiciones[1]][] = $transiciones[2];
         }
     }
-    private function cambiarEtiquetasAExpresionesRegulares() {
-        foreach($this->conjuntoDeIdentificadores as $identificador) {
-            $expresionRegular = [];
-            $unset = 0;
-            foreach ($this->relacionDeTransicion[$identificador] as $caracter => $transiciones) {
-                if ($this->relacionDeTransicion[$identificador][$caracter][0] == $identificador) {
-                    $expresionRegular[] = $caracter;
-                    unset($this->relacionDeTransicion[$identificador][$caracter]);
-                    $unset = 1;
+    private function transformarEtiquetasAExpresionesRegulares() {
+        foreach($this->conjuntoDeIdentificadores as $identificador1) {
+            foreach($this->conjuntoDeIdentificadores as $identificador2) {
+                $expresionRegular = [];
+                $unset = 0;
+                foreach ($this->relacionDeTransicion[$identificador1] as $caracter => $transiciones) {
+                    foreach($transiciones as $estado2) {
+                        if ($estado2 == $identificador2) {
+                            $expresionRegular[] = $caracter;
+                            unset($this->relacionDeTransicion[$identificador1][$caracter]);
+                            $unset = 1;
+                        }
+                    }
                 }
-            }
-            if($unset == 1) {
-                $this->relacionDeTransicion[$identificador][implode('+', $expresionRegular)][] = $identificador;
+                if($unset == 1) {
+                    $this->relacionDeTransicion[$identificador1][implode('+', $expresionRegular)][] = $identificador2;
+                }
             }
         }
     }
     private function estanConectados ($estado1, $estado2) {
-        foreach($this->relacionDeTransicion[$estado1] as $caracter => $estadoDeLlegada) {
+        foreach($this->relacionDeTransicion[$estado1] as $estadoDeLlegada) {
             if($estadoDeLlegada[0] == $estado2) {
                 return true;
             }
@@ -217,15 +221,179 @@ class AFND extends AFD {
             }
         }
     }
-    public function convertirAFDaER () {
-        foreach($this->estadosFinales as $estadoFinal) {
-            $this->relacionDeTransicion[$estadoFinal]["@"][] = "F";
+    private function estadosPorEliminar () {
+        $estados = [];
+        foreach($this->relacionDeTransicion as $estado1 => $transiciones) {
+            if ($estado1 != $this->estadoInicial && !in_array($estado1, $this->estadosFinales)) {
+                $estados[] = $estado1;
+            }
         }
-        $this->relacionDeTransicion["F"] = [];
-        $this->conjuntoDeIdentificadores[] = "F";
-        $this->estadosFinales = ["F"];
-        $this->cambiarEtiquetasAExpresionesRegulares();
+        return $estados;
+    }
+    private function estados1 ($estadoDeLlegada) {
+        $estados = [];
+        foreach ($this->relacionDeTransicion as $estado1 => $transiciones) {
+            foreach ($transiciones as $caracter => $estados2) {
+                foreach ($estados2 as $estado2) {
+                    if($estado2 == $estadoDeLlegada && $estado1 != $estado2) {
+                        $estados[] = [$estado1,$caracter];
+                    }
+                }
+            }
+        }
+        return $estados;
+    }
+    private function transicionAsiMismo ($estado) {
+        foreach ($this->relacionDeTransicion[$estado] as $caracter => $estados) {
+            foreach ($estados as $estadoDeLlegada) {
+                if($estadoDeLlegada == $estado) {
+                    return $caracter;
+                }
+            }
+        }
+    }
+    private function simplificarER ($etiqueta) {
+        foreach($etiqueta as $key => $valor) {
+            if($valor == "$") {
+                return [];
+            }
+            else {
+                if($valor == "$*") {
+                    $etiqueta[$key] = "@";
+                    return $this->simplificarER($etiqueta);
+                }
+                else {
+                    if($valor == "@") {
+                        unset($etiqueta[$key]);
+                        return $this->simplificarER($etiqueta);
+                    }
+                }
+            }
+        }
+        return $etiqueta;
+    }
+    private function agregarParentesis($arreglo) {
+        $cadena = "";
+        foreach($arreglo as $a) {
+            $cadena = $cadena."(".$a.")";
+        }
+        return $cadena;
+    }
+    private function desconectarTransicionesHaciaElEstado($estado) {
+        foreach($this->relacionDeTransicion as $estado1 => $transiciones) {
+            foreach($transiciones as $caracter => $estados) {
+                foreach($estados as $estado2) {
+                    if($estado2 == $estado) {
+                        if(count($estados)>1) {
+                            unset($this->relacionDeTransicion[$estado1][$caracter][array_search($estado, $estados)]);
+                            $this->relacionDeTransicion[$estado1][$caracter] = array_values($this->relacionDeTransicion[$estado1][$caracter]);
+                        }
+                        else {
+                            unset($this->relacionDeTransicion[$estado1][$caracter]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private function eliminarEstadosNoInicialesYNoFinales() {
+        $estadosAEliminar = $this->estadosPorEliminar();
+        while(!empty($estadosAEliminar)) {
+            $estado = current($estadosAEliminar);
+            foreach ($this->estados1($estado) as $primerEstado) {
+                foreach ($this->relacionDeTransicion[$estado] as $caracter => $transiciones) {
+                    foreach ($transiciones as $tercerEstado) {
+                        if($tercerEstado != $estado) {
+                            $etiqueta = [$primerEstado[1]];
+                            if (strpos($this->transicionAsiMismo($estado),"+") !== false) {
+                                $etiqueta[] = "(".$this->transicionAsiMismo($estado)."*)";
+                            }    
+                            else {
+                                $etiqueta[] = $this->transicionAsiMismo($estado)."*";
+                            }
+                            $etiqueta[] = $caracter;
+                            $etiqueta = $this->simplificarER($etiqueta);
+                            if(!empty($etiqueta)) {
+                                $llave = $this->agregarParentesis($etiqueta);
+                                if($tercerEstado == $primerEstado[0]) {
+                                    $this->relacionDeTransicion[$primerEstado[0]][$this->transicionAsiMismo($tercerEstado)."+".$llave][] = $tercerEstado;
+                                    unset($this->relacionDeTransicion[$primerEstado[0]][$this->transicionAsiMismo($tercerEstado)]);
+                                }
+                                else {
+                                    $this->relacionDeTransicion[$primerEstado[0]][$llave][] = $tercerEstado;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            unset($this->relacionDeTransicion[$estado]);
+            unset($this->conjuntoDeIdentificadores[array_search($estado, $this->conjuntoDeIdentificadores)]);
+            $this->desconectarTransicionesHaciaElEstado($estado);
+            array_shift($estadosAEliminar);
+        }
+    }
+    private function unirTransiciones() {
+        $union = "";
+        foreach($this->relacionDeTransicion[$this->estadoInicial] as $etiqueta => $transiciones) {
+            foreach($transiciones as $estado2) {
+                if($estado2 == $this->estadosFinales[0]) {
+                    if ($union == "") {
+                        $union = $etiqueta;
+                        unset($this->relacionDeTransicion[$this->estadoInicial][$etiqueta]);
+                    }
+                    else {
+                        $union = $union."+".$etiqueta;
+                        unset($this->relacionDeTransicion[$this->estadoInicial][$etiqueta]);
+                    }
+                }
+            }
+        }
+        $this->relacionDeTransicion[$this->estadoInicial][$union][] = $this->estadosFinales[0];
+    }
+    private function ER(){
+        $expresionRegularFinal = "((";
+        $expresionRegularFinal = $expresionRegularFinal.$this->transicionAsiMismo($this->estadoInicial).")*(";
+        foreach($this->relacionDeTransicion[$this->estadoInicial] as $etiqueta => $transiciones) {
+            foreach($transiciones as $transicion) {
+                if($transicion == $this->estadosFinales[0]) {
+                    $expresionRegularFinal = $expresionRegularFinal.$etiqueta.")";
+                }
+            }
+        }
+        $expresionRegularFinal = $expresionRegularFinal."(".$this->transicionAsiMismo($this->estadosFinales[0]).")*(";
+        foreach($this->relacionDeTransicion[$this->estadosFinales[0]] as $etiqueta => $transiciones) {
+            foreach($transiciones as $transicion) {
+                if($transicion == $this->estadoInicial) {
+                    $expresionRegularFinal = $expresionRegularFinal.$etiqueta."))(";
+                }
+            }
+        }
+        $expresionRegularFinal = $expresionRegularFinal.$this->transicionAsiMismo($this->estadoInicial).")*(";
+        foreach($this->relacionDeTransicion[$this->estadoInicial] as $etiqueta => $transiciones) {
+            foreach($transiciones as $transicion) {
+                if($transicion == $this->estadosFinales[0]) {
+                    $expresionRegularFinal = $expresionRegularFinal.$etiqueta.")";
+                }
+            }
+        }
+        $expresionRegularFinal = $expresionRegularFinal."(".$this->transicionAsiMismo($this->estadosFinales[0]).")*";
+        return $expresionRegularFinal;
+    }
+    public function convertirAFDAER () {
+        if(count($this->estadosFinales)>1) {
+            foreach($this->estadosFinales as $estadoFinal) {
+                $this->relacionDeTransicion[$estadoFinal]["@"][] = "F";
+            }
+            $this->relacionDeTransicion["F"] = [];
+            $this->conjuntoDeIdentificadores[] = "F";
+            $this->estadosFinales = ["F"];
+        }
+        $this->transformarEtiquetasAExpresionesRegulares();
         $this->agregarTransicionesVaciasEntreEstados ();
+        $this->eliminarEstadosNoInicialesYNoFinales();
+        $this->unirTransiciones();
+        return $this->ER();
     }
     private function buscarMasTransicionesAFND($estado1, $estado2) {
         foreach ($this->relacionDeTransicion[$estado1] as $a => $transicion) {
