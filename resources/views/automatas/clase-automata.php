@@ -55,6 +55,87 @@ class AFD {
     }
 }
 
+class AP extends AFD {
+    public $relacionDeTransicion = [];
+	public $separacionArray = [];
+    public $pila_aux = array("Z");
+
+	/* q0,A/@/1,q0;q0,B/1/@,q1;q1,B/1/@,q1;q1,@/Z/@,q2 */
+
+    public function __construct() {
+        // Crea el objeto sin parámetros.
+        
+    }
+    public function crearAP($identificadores, $alfabeto, $estadoI, $estadosF) {
+        $this->conjuntoDeIdentificadores = explode(",", $identificadores);
+        $this->alfabetoDeEntrada = explode(",", $alfabeto);
+        $this->estadoInicial = $estadoI;
+        $this->estadosFinales = explode(",", $estadosF);
+    }
+    public function llenarRelacionDeTransicion($funcion) {/* READ-POP-PUSH    @=VACIO */
+        $funcionPuntoYComa = explode(";", $funcion);
+        for ($i = 0; $i < count($funcionPuntoYComa); $i++) {
+            $transiciones = explode(",", $funcionPuntoYComa[$i]);
+            $separacionTransicion = explode("/", $transiciones[1]);
+			/* $this->relacionDeTransicion[$transiciones[0]][$separacionTransicion[0]][] = $transiciones[2]; */
+			$this->relacionDeTransicion[$transiciones[0]][$transiciones[1]][] = $transiciones[2];
+			$this->separacionArray[$i] =  $separacionTransicion;
+			/* echo "\n\n----------------------------------\n\n";
+			var_dump($this->relacionDeTransicion); */
+			/* var_dump($transiciones); */
+        } 
+    }
+/* 
+REGLAS: (NO PUEDEN PASAR)
+
+	1) q0,@/@/@,q0
+	2) q0,@/@/n,q0
+
+
+*/ 
+	public function validarFuncionTransicion() {
+		/* var_dump($this->relacionDeTransicion);
+		echo "\n\n-------------------------------------\n\n"; */
+		var_dump($this->separacionArray);
+		/* $this->relacionDeTransicion[$this->separacionArray[$i][0]] */
+	}
+
+	private function buscarMasTransicionesAP($estado1, $estado2) {
+        foreach ($this->relacionDeTransicion[$estado1] as $a => $transicion) {
+            foreach ($transicion as $t) {
+                if ($t == $estado2) {
+                    $caracteres[] = $a;
+                }
+            }
+        }
+        return implode(",", $caracteres);
+    }
+
+    public function dibujarAP() {
+        $link = "https://image-charts.com/chart?cht=gv&chl=digraph {";
+        foreach ($this->estadosFinales as $estadoFinal) {
+            if ($estadoFinal != "") {
+                $link = $link . '"' . $estadoFinal . '"' . "[shape=doublecircle];";
+            }
+        }
+        $link = $link . '"ei"[shape=point]; "ei" -> ' . '"' . $this->estadoInicial . '"' . ';';
+
+        foreach ($this->relacionDeTransicion as $estado => $transiciones) {
+            $listos = [];
+            foreach ($transiciones as $transicion) {
+                foreach ($transicion as $t) {
+                    if (!in_array($t, $listos)) {
+                        $link = $link . '"' . $estado . '"' . " -> " . '"' . $t . '"' . '[label="' . $this->buscarMasTransicionesAP($estado, $t) . '"];';
+                        $listos[] = $t;
+                    }
+                }
+            }
+        }
+        $link = $link . "}";
+        return $link;
+    }
+}
+
 class AFND extends AFD {
     public $relacionDeTransicion = [];
 

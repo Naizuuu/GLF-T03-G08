@@ -53,7 +53,7 @@
         </div>
         <div class="col-sm">  {{-- SEGUNDA COLUMNA --}}
             <div class="form-group">
-                <input type="text" class="form-control" id="transAlfabeto" name="{{$cantEstado}}_t{{$i}}_B" title="Debe ingresar la transición según el alfabeto (Ej: aabbb). Si desea ingresar una transición vacía use '@'." pattern="^([A-Za-z0-9]+|@)$" placeholder="Ingrese transicion según alfabeto (Ej: aabbb)" autocomplete="off" value="<?php echo htmlspecialchars($_GET[$cantEstado. '_t' . $i . '_B'] ?? '', ENT_QUOTES); ?>" required>
+                <input type="text" class="form-control" id="transAlfabeto" name="{{$cantEstado}}_t{{$i}}_B" title="Debe ingresar la transición según el alfabeto (Ej: A/@/1). Para ingresar una transición vacía use '@'." pattern="^(([a-zA-Z0-9])|(@)){1}(\/(([a-zA-Z0-9])|(@)){1})(\/(([a-zA-Z0-9])|(@)){1})$" placeholder="Ingrese transicion según alfabeto (Ej: aabbb)" autocomplete="off" value="<?php echo htmlspecialchars($_GET[$cantEstado. '_t' . $i . '_B'] ?? '', ENT_QUOTES); ?>" required>
             </div>
         </div>
         <div class="col-sm-auto">  {{-- TERCERA COLUMNA --}}
