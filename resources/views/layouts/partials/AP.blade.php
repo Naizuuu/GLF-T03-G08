@@ -74,7 +74,6 @@
             $parteC = $_GET[$cantEstado. '_t' . $i . '_C'];
             $parteBsplit = str_split($parteB);
             for($k = 0; $k < sizeof($parteBsplit); $k++) {
-                /* var_dump($parteBsplit[0]); echo "->  "; var_dump($k); echo "<br>"; */
                 if(!in_array($parteBsplit[0], $alfabetoArray, true)) {
                     $verificacion = false;
                     if($parteBsplit[0] == '@') {
@@ -82,15 +81,6 @@
                     }
                 }
             }
-            /* for($k = 0; $k < sizeof($parteBsplit); $k++) {
-                var_dump($parteBsplit[$k]); echo "->  "; var_dump($k); echo "<br>";
-                if(!in_array($parteBsplit[$k], $alfabetoArray, true)) {
-                    $verificacion = false;
-                    if($parteBsplit[$k] == '@') {
-                        $verificacion = true;
-                    }
-                }
-            } */
             if($verificacion) {
                 if($aux == $auxMax - 1) {
                     $transicion = $transicion . $parteA . ',' . $parteB . ',' . $parteC;

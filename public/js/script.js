@@ -2,11 +2,6 @@ var stepZero = document.getElementById('stepZero');
 var stepOne = document.getElementById('stepOne');
 var stepTwo = document.getElementById('stepTwo');
 
-/* $(stepOne).ready(function(){
-    if ($("#stepOne").html().length > 0) {
-      $('#stepZero').hide();
-    }                                           
-}); */
 
 $(stepTwo).ready(function(){
     if ($("#stepTwo").html().length > 0) {

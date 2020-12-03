@@ -12,8 +12,7 @@
     $estadoInicial1 = base64_decode($_GET['ei1']);
     $estadosFinales1 = base64_decode($_GET['ef1']);
     $fTrans1 = base64_decode($_GET['f1']);
-    $automataElegido = base64_decode($_GET['ae']); 
-
+    $automataElegido = base64_decode($_GET['ae']);
 
     /* automata 2 */
     $identificadores2 = base64_decode($_GET['i2']);

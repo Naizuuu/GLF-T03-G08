@@ -15,12 +15,10 @@
     $automataElegido = base64_decode($_GET['ae']);
 
     if($automataElegido == "AFD") {
-        $automata1 = new AFD();
-        $automata1->crearAFD($identificadores1, $alfabeto, $estadoInicial1, $estadosFinales1);
-        $automata1->llenarFuncionDeTransicion($fTrans1);
+        $automata1 = new AFND();
+        $automata1->crearAFND($identificadores1, $alfabeto, $estadoInicial1, $estadosFinales1);
+        $automata1->llenarRelacionDeTransicion($fTrans1);
     }
-
-    $dibujoUno = 'dibujar' . $automataElegido;
 
 @endphp
 <h1 style="margin-bottom: 2%;" class="text-center display-2">Resultado Autómatas</h1>
@@ -29,7 +27,9 @@
     <div class="row">
         <div class="col-sm">
             <h2 class="text-center">{{$automataElegido}}</h1>
-            <img src="{{$automata1->$dibujoUno()}}" alt="Automata {{$automataElegido}}">
+            <img src="{{$automata1->dibujarAFND()}}" alt="Automata {{$automataElegido}}">
+            <h2 class="text-center" style="margin-top: 3%;">Expresión Regular {{$automataElegido}}</h1>
+            <h5>@php print_r($automata1->convertirAFDaER()); @endphp</h5>
         </div>
     </div>
 </div>
@@ -37,10 +37,6 @@
 <nav aria-label="..." style="display: inline-block; text-shadow: none; margin-top: 3%;">
     <ul class="pagination pagination-lg">
         <li class="page-item"><button type="button" class="page-link" id="navUno" onclick="">Resultado Inicio</button></li>
-        {{-- <li class="page-item"><button type="button" class="page-link" id="navDos" onclick="">Simplificación</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navTres" onclick="">Complemento</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navCuatro" onclick="">Unión</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navCinco" onclick="">Concatenación</button></li> --}}
     </ul>
 </nav>
 
