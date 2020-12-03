@@ -380,7 +380,7 @@ class AFND extends AFD {
         $expresionRegularFinal = $expresionRegularFinal."(".$this->transicionAsiMismo($this->estadosFinales[0]).")*";
         return $expresionRegularFinal;
     }
-    public function convertirAFDAER () {
+    public function convertirAFDaER () {
         if(count($this->estadosFinales)>1) {
             foreach($this->estadosFinales as $estadoFinal) {
                 $this->relacionDeTransicion[$estadoFinal]["@"][] = "F";
