@@ -2,8 +2,9 @@
 <div class="container">
     <div class="row">
         <div class="col-sm"> 
-            <div class="input-group" style="margin-top: 3%;">
-                <select class="custom-select" name="automataElegido" {{-- style="text-align-last: center;" --}}>
+            <label for="automataElegido">Tipo de Autómata</label>
+            <div class="input-group" style="margin-top: 0%;">
+                <select class="custom-select" name="automataElegido">
                     <option value="AFD" <?php if(isset($_GET['automataElegido']) && $_GET['automataElegido'] == 'AFD') { echo 'selected="selected"'; } ?>>AFD</option>
                     <option value="AP" <?php if(isset($_GET['automataElegido']) && $_GET['automataElegido'] == 'AP') { echo 'selected="selected"'; } ?>>AP</option>
                 </select>

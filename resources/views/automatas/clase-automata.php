@@ -85,20 +85,6 @@ class AP extends AFD {
 			/* var_dump($transiciones); */
         } 
     }
-/* 
-REGLAS: (NO PUEDEN PASAR)
-
-	1) q0,@/@/@,q0
-	2) q0,@/@/n,q0
-
-
-*/ 
-	public function validarFuncionTransicion() {
-		/* var_dump($this->relacionDeTransicion);
-		echo "\n\n-------------------------------------\n\n"; */
-		var_dump($this->separacionArray);
-		/* $this->relacionDeTransicion[$this->separacionArray[$i][0]] */
-	}
 
 	private function buscarMasTransicionesAP($estado1, $estado2) {
         foreach ($this->relacionDeTransicion[$estado1] as $a => $transicion) {
@@ -133,6 +119,49 @@ REGLAS: (NO PUEDEN PASAR)
         }
         $link = $link . "}";
         return $link;
+    }
+
+    private function unirFuncionesDeTransicion($tipoAutomata1, $tipoAutomata2, $automata1, $automata2) {
+        $arregloDeRelacionDeTransicion = [];
+        if($tipoAutomata1 == "AP" && $tipoAutomata2 == "AP") {
+            $arregloDeRelacionDeTransicion = array_merge
+            ($automata1->relacionDeTransicion, $automata2->relacionDeTransicion);
+        }
+        return array_merge(["z0" => ["@/@/@" => [$automata1->estadoInicial, $automata2->estadoInicial]]], $arregloDeRelacionDeTransicion);
+    }
+
+    public function union($automata1, $automata2) {
+        $automata3 = new AP;
+        $automata3->conjuntoDeIdentificadores[] = "z0";
+        $automata3->conjuntoDeIdentificadores = array_merge($automata1->conjuntoDeIdentificadores, $automata2->conjuntoDeIdentificadores);
+        array_unshift($automata3->conjuntoDeIdentificadores, "z0");
+        $automata3->alfabetoDeEntrada = $automata1->alfabetoDeEntrada;
+        $automata3->estadoInicial = "z0";
+        $automata3->estadosFinales = array_merge($automata1->estadosFinales, $automata2->estadosFinales);
+        $automata3->relacionDeTransicion = $this->unirFuncionesDeTransicion(get_class($automata1) , get_class($automata2) , $automata1, $automata2);
+        return $automata3;
+    }
+
+    private function concatenarFuncionesDeTransicion($tipoAutomata1, $tipoAutomata2, $automata1, $automata2) {
+        $arregloDeRelacionDeTransicion = [];
+        if ($tipoAutomata1 == "AP" && $tipoAutomata2 == "AP") {
+            $arregloDeRelacionDeTransicion = array_merge($automata1->relacionDeTransicion, $automata2->relacionDeTransicion);
+        }
+        foreach ($automata1->estadosFinales as $estadoFinal) {
+            $arregloDeRelacionDeTransicion[$estadoFinal]["@/Z/@"][] = $automata2->estadoInicial;
+        }
+        return array_merge(["z0" => ["@/@/Z" => [$automata1->estadoInicial]]], $arregloDeRelacionDeTransicion);
+    }
+
+    public function concatenacion($automata1, $automata2) {
+        $automata3 = new AP;
+        $automata3->conjuntoDeIdentificadores = array_merge($automata1->conjuntoDeIdentificadores, $automata2->conjuntoDeIdentificadores);
+        $automata3->alfabetoDeEntrada = $automata1->alfabetoDeEntrada;
+        /* $automata3->estadoInicial = $automata1->estadoInicial; */
+            $automata3->estadoInicial = "z0";
+        $automata3->estadosFinales = $automata2->estadosFinales;
+        $automata3->relacionDeTransicion = $this->concatenarFuncionesDeTransicion(get_class($automata1) , get_class($automata2) , $automata1, $automata2);
+        return $automata3;
     }
 }
 

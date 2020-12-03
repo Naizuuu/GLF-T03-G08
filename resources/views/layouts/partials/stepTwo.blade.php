@@ -27,7 +27,6 @@
         </div>
         @prepend('menu')
         @if(isset($_GET['cantidadEstados1_verificador']))
-            {{-- @if(isset($_GET['cantidadEstados1_identificadores']) && isset($_GET['cantidadEstados2_identificadores'])) --}}
                 @php
                     $alfabeto = $_GET['alfabetoAutomata'];
                     /* automata 1 */

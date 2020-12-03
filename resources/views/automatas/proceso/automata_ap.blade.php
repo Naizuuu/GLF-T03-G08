@@ -38,12 +38,40 @@
         <div class="col-sm">
             <h2 class="text-center">{{$automataElegido}}</h1>
             <img src="{{$automata1->dibujarAP()}}" alt="Automata {{$automataElegido}}">
-            @php echo "<br><br>"; var_dump($automata1->dibujarAP()); @endphp
         </div>
         <div class="col-sm">
             <h2 class="text-center">{{$automataElegido}}</h1>
             <img src="{{$automata2->dibujarAP()}}" alt="Automata {{$automataElegido}}">
-            @php echo "<br><br>"; var_dump($automata2->dibujarAP()); @endphp
+        </div>
+    </div>
+</div>
+
+<div class="procesoDos" style="display: none;">
+    <h2 style="margin-bottom: 2%;" class="text-center display-4">Unión</h2>
+    @php
+        $automataU = new AP();
+        $automataU = $automataU->union($automata1, $automata2);
+    @endphp
+
+    <div class="row">
+        <div class="col-sm">
+        <h2 class="text-center">Unión de ambos {{$automataElegido}}</h1>
+            <img src="{{$automataU->dibujarAP()}}" alt="Automata Unión">
+        </div>
+    </div>
+</div>
+
+<div class="procesoTres" style="display: none;">
+    <h2 style="margin-bottom: 2%;" class="text-center display-4">Concatenación</h2>
+    @php
+        $automataC = new AP();
+        $automataC = $automataC->concatenacion($automata1, $automata2);
+    @endphp
+
+    <div class="row">
+        <div class="col-sm">
+        <h2 class="text-center">Concatenacion de ambos {{$automataElegido}}</h1>
+            <img src="{{$automataC->dibujarAP()}}" alt="Automata Concatenación">
         </div>
     </div>
 </div>
@@ -51,11 +79,8 @@
 <nav aria-label="..." style="display: inline-block; text-shadow: none; margin-top: 3%;">
     <ul class="pagination pagination-lg">
         <li class="page-item"><button type="button" class="page-link" id="navUno" onclick="">Resultado Inicio</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navDos" onclick="">Simplificación</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navTres" onclick="">Complemento</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navCuatro" onclick="">Unión</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navCinco" onclick="">Concatenación</button></li>
-        <li class="page-item"><button type="button" class="page-link" id="navSeis" onclick="">Intersección</button></li>
+        <li class="page-item"><button type="button" class="page-link" id="navDos" onclick="">Unión</button></li>
+        <li class="page-item"><button type="button" class="page-link" id="navTres" onclick="">Concatenación</button></li>
     </ul>
 </nav>
 

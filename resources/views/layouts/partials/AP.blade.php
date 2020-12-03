@@ -170,7 +170,6 @@
     
     @isset($_GET[$cantEstado . '_estadosfinales'])
         @empty($_GET[$cantEstado . '_verificador'])
-            {{-- @php echo '<br><br>Por favor, presione confirmar nuevamente.'; @endphp --}}
             <h4><br>Por favor, presione confirmar nuevamente.</h4>
             <input type="text" style="display: none;" class="form-control" name="{{$cantEstado}}_verificador" value="1">
         @endempty

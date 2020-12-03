@@ -24,13 +24,4 @@ $(document).ready(function(){
     $("#navTres").click(function() {
         $(".procesoTres").toggleClass('oculto');
     });
-    $("#navCuatro").click(function() {
-        $(".procesoCuatro").toggleClass('oculto');
-    });
-    $("#navCinco").click(function() {
-        $(".procesoCinco").toggleClass('oculto');
-    });
-    $("#navSeis").click(function() {
-        $(".procesoSeis").toggleClass('oculto');
-    });
 });
